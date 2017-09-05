@@ -1,17 +1,24 @@
 {
-  "name": "botDM",
-  "version": "1.0.0",
-  "description": "dm client for discord bots",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "package": "electron-packager ./ Countdown --all --out ./export/ --overwrite"
-  },
-  "devDependencies": {
-    "electron": "~1.6.2"
-  },
-  "dependencies": {
-    "discordie": "^0.11.0",
-    "fs": "0.0.1-security"
-  }
+    "name": "botDM",
+    "version": "1.0.0",
+    "description": "dm client for discord bots",
+    "bugs": {
+        "url": "https://github.com/jaketr00/Discord-Bot-Client/issues"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "jaketr00",
+        "email": "jaketr00@gmail.com"
+    },
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "devDependencies": {
+        "electron": "~1.6.2"
+    },
+    "dependencies": {
+        "discordie": "^0.11.0",
+        "fs": "0.0.1-security"
+    }
 }
