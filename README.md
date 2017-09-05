@@ -22,7 +22,7 @@ My end goal with this project is to create a client very similar to the native D
 * Send and receive direct messages
 * Notifications on a new message
 
-<sup>1</sup>Discord itself does not store a direct message list for Bot Users, and so it will not show up.
+<sup>1</sup>Discord itself does not store a direct message list for Bot Users, and so it will not show up
 
 ### Immediate To-Do List
 
@@ -55,7 +55,7 @@ Currently there is no compiled version of this app, and so you need [Node.JS] to
 ## Usage
 
 **To open a new DM**
-Get the recipient's Discord ID and enter it in the text box at the top left, then click "add".
+Get the recipient's Discord ID and enter it in the text box at the top left, then click "add"
 
 **To Send a message**
 Click on the recipient's name in the list to the left, type your message in the text box at the bottom, then click your "enter"/"return" key
