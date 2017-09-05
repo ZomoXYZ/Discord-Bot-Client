@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.dm-icon {
+    width: 25px;
+    height: 25px;
+}
+
+#dm-list {
+    width: 150px;
+    height: 100%;
+    flex-shrink: 0;
+    overflow-y: scroll;
+}
+#dm-list .dm-item {
+    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    word-break: break-word;
+    text-overflow: ellipsis;
+}
+#dm-list .dm-item .dm-recipientcount {
+    display: none;
+}
+#dm-list .dm-item.dm-group .dm-recipientcount {
+    display: inline-block;
+}
+
+#dm-open {
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#dm-open .dm-openinner {
+    flex-grow: 1;
+    overflow-y: scroll
+}
+#dm-open .dm-openinner .dm-name::after {
+    content: "\a";
+    white-space: pre;
+}
+#dm-open .dm-openinner .dm-date {
+    display: none;
+}
+#dm-open .dm-openinner .dm-content {
+    margin-left: 45px;
+}
+
+.dm-newmessage {
+    background: #ddd;
+}
