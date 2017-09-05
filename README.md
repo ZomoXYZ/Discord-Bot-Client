@@ -40,7 +40,6 @@ My end goal with this project is to create a client very similar to the native D
 ### What I Will Never Add
 
 * Video Calling
-
   * Video calling requires the ability to call in a Direct Message, and bots can't call in a direct message
 
 ## Installation
