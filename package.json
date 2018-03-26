@@ -15,7 +15,7 @@
         "start": "electron ."
     },
     "devDependencies": {
-        "electron": "~1.6.2"
+        "electron": "1.8.2-beta5"
     },
     "dependencies": {
         "discordie": "^0.11.0",
