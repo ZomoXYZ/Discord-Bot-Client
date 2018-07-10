@@ -1,14 +1,23 @@
-const ipc = require('electron').ipcRenderer;
+const ipc = require('electron').ipcRenderer,
+      Discord = require('discord.js'),
+      client = new Discord.Client();
+
+let Channel = null;
+
 addEventListener('load', () => {
     
-    var windowActive = document.hidden,
-        basicInfo;
-    
+    let windowActive = document.hidden;
     addEventListener("focus", () => windowActive = true);
     addEventListener("blur", () => windowActive = false);
     
-    var displayMessage = (msg, chanID) => {
-        var outterDiv = document.createElement('div'),
+    ipc.on('token', (event, arg) => {
+        client.on('ready', start);
+        client.login(arg);
+    });
+    ipc.send('ready');
+    
+    const displayMessage = msg => {
+        let outterDiv = document.createElement('div'),
             innerImg = document.createElement('img'),
             innerSpan = document.createElement('span'),
             namedateSpan = document.createElement('span'),
@@ -20,7 +29,7 @@ addEventListener('load', () => {
         outterDiv.setAttribute('id', 'messageid-'+msg.id);
         outterDiv.setAttribute('class', 'dm-message');
 
-        innerImg.setAttribute('src', msg.author.avatarURL);
+        innerImg.setAttribute('src', msg.author.displayAvatarURL);
         innerImg.setAttribute('class', 'dm-icon');
 
         innerSpan.setAttribute('class', 'dm-text');
@@ -31,7 +40,7 @@ addEventListener('load', () => {
         nameSpan.setAttribute('class', 'dm-name');
         nameSpan.setAttribute('id', 'userid-'+msg.author.id);
 
-        dateSpan.textContent = msg.timestamp;
+        dateSpan.textContent = msg.createdTimestamp;
         dateSpan.setAttribute('class', 'dm-date');
 
         messageSpan.textContent = msg.content;
@@ -46,28 +55,44 @@ addEventListener('load', () => {
         outterDiv.appendChild(innerImg);
         outterDiv.appendChild(innerSpan);
 
-        document.getElementById('openid-'+chanID).append(outterDiv);
+        document.getElementById('openid-'+msg.channel.id).append(outterDiv);
     };
     
-    var displayDMChannel = chan => {
-        var outterDiv = document.createElement('div'),
+    const displayDMChannel = channel => {
+        let outterDiv = document.createElement('div'),
             innerImg = document.createElement('img'),
             innerSpan = document.createElement('span'),
             titleSpan = document.createElement('span'),
             recipientsSpan = document.createElement('span');
+        
+        let info = {}
+        
+        if (channel.type === 'group')
+            info = {
+                icon: channel.iconURL,
+                name: channel.name,
+                length: channel.recipients.toArray().length
+            };
+        else
+            info = {
+                icon: channel.recipient.displayAvatarURL,
+                name: channel.recipient.username,
+                length: 1
+            };
 
-        outterDiv.setAttribute('id', 'channelid-'+chan.id);
-        outterDiv.setAttribute('class', 'dm-item '+(chan.isGroup ? 'dm-group' : 'dm-user'));
+        outterDiv.setAttribute('id', 'channelid-'+channel.id);
+        outterDiv.setAttribute('class', 'dm-item '+(channel.type === 'group' ? 'dm-group' : 'dm-user'));
 
-        if (chan.iconURL) innerImg.setAttribute('src', chan.iconURL);
+        if (info.icon)
+            innerImg.setAttribute('src', info.icon);
         innerImg.setAttribute('class', 'dm-icon');
 
         innerSpan.setAttribute('class', 'dm-text');
 
-        titleSpan.textContent = chan.name;
+        titleSpan.textContent = info.name;
         titleSpan.setAttribute('class', 'dm-title');
 
-        recipientsSpan.textContent = chan.recipientsCount;
+        recipientsSpan.textContent = info.length;
         recipientsSpan.setAttribute('class', 'dm-recipientcount');
 
         innerSpan.appendChild(titleSpan);
@@ -77,136 +102,172 @@ addEventListener('load', () => {
         outterDiv.appendChild(innerSpan);
 
         document.querySelector('#dm-list .dm-existing').prepend(outterDiv);
-    }
-
-    ipc.send('startup');
-
-    ipc.on('basicInfo', (event, arg) => {
-
-        basicInfo = arg;
-
-    });
-
-    ipc.on('DMList', (event, arg) => {
-
-        console.log(arg);
-
-        document.querySelector('#dm-list .dm-existing').innerHTML = '';
-
-        for (var i = 0; arg.length > i; i++){
-            console.log('dm')
-            displayDMChannel(arg[i]);
-        }
-
-    });
+    };
     
-    document.querySelector('#dm-list .dm-existing').addEventListener('click', e => {//read dm
-        console.log(e);
-        var id = null;
-        for (var i = 0; e.path.length > i; i++) {
-            if (e.path[i] === document.body)
-                i = e.path.length;
-            else if (e.path[i].getAttribute('class') && e.path[i].getAttribute('class').split(' ').indexOf('dm-item')+1)
-                id = e.path[i].getAttribute('id').split(' ')[0].replace('channelid-', '');
-        }
+    const readDM = id => {
         
-        console.log(id)
-        if (id) {
-            ipc.send('readDM', id);
-            if (e.target.hasAttribute('class')) {
-                var classes = e.target.getAttribute('class').split(' ');
-                if (classes.indexOf('dm-newmessage')+1) {
-                    classes.splice(classes.indexOf('dm-newmessage', 1));
-                    e.target.setAttribute('class', classes.join(' '));
-                }
-            }
-        }
-    });
-    
-    document.querySelector('#dm-list .dm-add span').addEventListener('click', e => {//add user
-        console.log(e);
-        if (document.querySelector('#dm-list .dm-add input').value) {
-            ipc.send('openDM', document.querySelector('#dm-list .dm-add input').value);
-            document.querySelector('#dm-list .dm-add input').value = '';
-        }
-    });
-    
-    ipc.on('initialDM', (event, arg) => {
-        console.log(arg);
+        return new Promise(function(success, fail) {
+            
+            let channel = client.channels.get(id);
+            
+            document.querySelectorAll('[selected]').forEach(s => s.removeAttribute('selected'));
+            document.querySelector('#dm-list .dm-existing #channelid-'+channel.id).setAttribute('selected', '');
+            
+            if (channel)
+                channel.fetchMessages({limit: 100}).then(messages => {
+                    
+                    console.log('fetched')
+                    
+                    for (let i = 0; messages.length > i; i++)
+                        displayMessage(messages[i], id);
+                    
+                    console.log('displayed')
 
-        if (arg.messages) {
-            /*document.getElementById('dm-open').innerHTML = '';
+                    success({messages, channel});
+                    
+                }).catch(fail);
+            else
+                fail('Channel Not Found');
             
-            var openinnerdiv = document.createElement('div');
+        });
+    };
+    
+    const createDM = id => {
+        
+        return new Promise(async function(success, fail) {
             
-            openinnerdiv.setAttribute('id', 'openid-'+arg.id);
-            openinnerdiv.setAttribute('class', 'dm-openinner');
+            let user = await client.fetchUser(id);
             
-            document.getElementById('dm-open').prepend(openinnerdiv)*/
+            if (user)
+                user.createDM().then(success).catch(fail);
+            else
+                fail('User Not Found');
             
-            document.querySelector('#dm-open .dm-openinner').setAttribute('id', 'openid-'+arg.id);
-            document.querySelector('#dm-open .dm-openinner').innerHTML = '';
-            
-            for (var i = 0; arg.messages.length > i; i++)
-                displayMessage(arg.messages[i], arg.id);
-            
-        }
-    });
-    ipc.on('addDM', (event, arg) => {
-        console.log(arg);
-
-        displayDMChannel(arg);
-    });
-    ipc.on('messageCreate', (event, arg) => {
-        console.log(arg);
-        var activeDM = document.querySelector('#dm-open .dm-openinner').hasAttribute('id') && arg.id === document.querySelector('#dm-open .dm-openinner').getAttribute('id').replace('openid-', '');
-        if (activeDM)
-            displayMessage(arg.message, arg.id);
-        else if (!document.getElementById('channelid-'+arg.id)) {
-            console.log('dm')
-            displayDMChannel(arg.message.channel);
-        }
-        if (arg.message.author.id !== basicInfo.me.id && (!activeDM || !windowActive)) {
-            var notif = new Notification(arg.message.author.username+'#'+arg.message.author.discriminator, {
-                body: arg.message.content,
-                icon: arg.message.author.avatarURL
-            });
-            if (!activeDM) {
-                console.log('channelid-'+arg.message.author.id)
-                var DMInList = document.getElementById('channelid-'+arg.message.channel.id),
-                    classes = DMInList.getAttribute('class');
-                classes = classes.split(' ');
-                if (classes.indexOf('dm-newmessage')) {
-                    classes.push('dm-newmessage');
-                    DMInList.setAttribute('class', classes.join(' '));
-                }
+        });
+        
+    };
+    
+    const start = () => {
+        console.log('ready');
+        
+        let DMList = client.channels.filter(c => ['dm', 'group'].indexOf(c.type)+1);
+        
+        for (let i = 0; DMList.length > i; i++)
+            displayDMChannel(DMList[i]);
+        
+        document.querySelector('#dm-list .dm-existing').addEventListener('click', e => {//read dm
+            let id = null;
+            for (let i = 0; e.path.length > i; i++) {
+                if (e.path[i] === document.body)
+                    i = e.path.length;
+                else if (e.path[i].getAttribute('class') && e.path[i].getAttribute('class').split(' ').indexOf('dm-item')+1)
+                    id = e.path[i].getAttribute('id').split(' ')[0].replace('channelid-', '');
             }
-            notif.onclick = () => {
-                console.log(activeDM, arg.message.channel.id)
-                if (!activeDM) {
-                    ipc.send('readDM', arg.message.channel.id);
-                    var DMInList = document.getElementById('channelid-'+arg.message.channel.id);
-                    if (DMInList.hasAttribute('class')) {
-                        var classes = DMInList.getAttribute('class').split(' ');
+
+            console.log(id);
+            if (id) {
+                readDM(id).then(info => {
+                    let {channel, messages} = info;
+                    
+                    Channel = channel;
+                    
+                    if (e.target.hasAttribute('class')) {
+                        let classes = e.target.getAttribute('class').split(' ');
                         if (classes.indexOf('dm-newmessage')+1) {
                             classes.splice(classes.indexOf('dm-newmessage', 1));
+                            e.target.setAttribute('class', classes.join(' '));
+                        }
+                    };
+                    
+                    document.querySelector('#dm-open .dm-openinner').setAttribute('id', 'openid-'+id);
+                    document.querySelector('#dm-open .dm-openinner').innerHTML = '';
+                    
+                    
+                }).catch(console.error);
+            }
+        });
+
+        document.querySelector('#dm-list .dm-add span').addEventListener('click', e => {//add user
+            if (document.querySelector('#dm-list .dm-add input').value) {
+                createDM(document.querySelector('#dm-list .dm-add input').value).then(displayDMChannel);
+                document.querySelector('#dm-list .dm-add input').value = '';
+            }
+        });
+        
+        client.on('message', message => {
+            
+            if (['dm', 'group'].indexOf(message.channel.type)+1 && message.author.id !== client.user.id) {
+                
+                let id = message.channel.id;
+                
+                let activeDM = document.querySelector('#dm-open .dm-openinner').hasAttribute('id') && id === document.querySelector('#dm-open .dm-openinner').getAttribute('id').replace('openid-', '');
+                
+                if (activeDM)
+                    displayMessage(message, id);
+                else if (!document.getElementById('channelid-'+id))
+                    displayDMChannel(message.channel);
+                
+                if (!activeDM || !windowActive) {
+                    
+                    if (!activeDM) {
+                        console.log('channelid-'+message.author.id)
+                        let DMInList = document.getElementById('channelid-'+message.channel.id),
+                            classes = DMInList.getAttribute('class');
+                        classes = classes.split(' ');
+                        if (classes.indexOf('dm-newmessage')+1) {
+                            classes.push('dm-newmessage');
                             DMInList.setAttribute('class', classes.join(' '));
                         }
                     }
-                }
                     
-            };
-        }
-    });
-    
-    document.querySelector('#dm-open .dm-textbotcontain input.textbox').addEventListener('keydown', e => {
-        if (document.querySelector('#dm-open .dm-openinner').hasAttribute('id') && e.key === 'Enter') {
-            ipc.send('sendMessage', {
-                channelID: document.querySelector('#dm-open .dm-openinner').getAttribute('id').replace('openid-', ''),
-                content: e.target.value
-            });
-            e.target.value = '';
-        }
-    });
+                    let notif = new Notification(message.author.username+'#'+message.author.discriminator, {
+                        body: message.content,
+                        icon: message.author.displayAvatarURL
+                    });
+                    
+                    notif.onclick = () => {
+                        console.log(activeDM, message.channel.id)
+                        if (!activeDM) {
+                            Channel = message.channel;
+                            readDM(message.channel.id).then(info => {
+                                let {messages} = info;
+                            
+                                let DMInList = document.querySelector('#channelid-'+message.channel.id);
+                                if (DMInList.hasAttribute('class')) {
+                                    let classes = DMInList.getAttribute('class').split(' ');
+                                    if (classes.indexOf('dm-newmessage')+1) {
+                                        classes.splice(classes.indexOf('dm-newmessage', 1));
+                                        DMInList.setAttribute('class', classes.join(' '));
+                                    }
+                                }
+
+                            }).catch(console.error);
+                        }
+
+                    };
+                    
+                }
+                
+            }
+            
+        });
+
+        document.querySelector('#dm-open .dm-textbotcontain input.textbox').addEventListener('keydown', e => {
+            if (document.querySelector('#dm-open .dm-openinner').hasAttribute('id') && e.key === 'Enter') {
+                
+                if (Channel) {
+                    
+                    Channel.send(e.target.value).then(message => {
+                        displayMessage(message);
+                    });
+                    
+                    e.target.value = '';
+                    
+                }
+                
+            }
+        });
+        
+    };
 
 });

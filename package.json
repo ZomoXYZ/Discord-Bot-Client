@@ -15,10 +15,9 @@
         "start": "electron ."
     },
     "devDependencies": {
-        "electron": "1.8.2-beta5"
+        "electron": "^2.0.4"
     },
     "dependencies": {
-        "discordie": "^0.11.0",
-        "fs": "0.0.1-security"
+        "discord.js": "^11.3.2"
     }
 }

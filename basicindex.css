@@ -23,6 +23,9 @@ body {
     word-break: break-word;
     text-overflow: ellipsis;
 }
+#dm-list .dm-item[selected] {
+    background: #eee;
+}
 #dm-list .dm-item .dm-recipientcount {
     display: none;
 }
