@@ -15,6 +15,49 @@ addEventListener('load', () => {
         client.login(arg);
     });
     ipc.send('ready');
+
+    const parseMessage = (msg) => {
+        let content = msg.content;
+
+        content = content.replace(mentionRegex, (match, type, id) => {
+            switch(type) {
+                case '@':
+                case '@!':
+                    if (msg instanceof Discord.GuildChannel) {
+                        const member = msg.guild.members.get(id);
+
+                        if (member) {
+                            return '@' + member.displayName;
+                        }
+                    } else {
+                        const user = client.users.get(id);
+
+                        if(user) {
+                            return '@' + user.username;
+                        }
+                    }
+                    break;
+                case '@&':
+                    if (msg instanceof Discord.GuildChannel) {
+                        const role = msg.guild.roles.get(id);
+
+                        if (role) {
+                            return '@' + role.name;
+                        }
+                    }
+                    return '@deleted-role';
+                case '#':
+                    const channel = client.channels.get(id);
+
+                    if (channel) {
+                        return '#' + channel.name;
+                    }
+                    return '#deleted-channel';
+            }
+        });
+
+        return content;
+    }
     
     const displayMessage = msg => {
         let outterDiv = document.createElement('div'),
@@ -43,7 +86,7 @@ addEventListener('load', () => {
         dateSpan.textContent = msg.createdTimestamp;
         dateSpan.setAttribute('class', 'dm-date');
 
-        messageSpan.textContent = msg.content;
+        messageSpan.textContent = parseMessage(msg);
         messageSpan.setAttribute('class', 'dm-content');
 
         namedateSpan.appendChild(nameSpan);
