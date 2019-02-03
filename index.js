@@ -1,6 +1,7 @@
 const ipc = require('electron').ipcRenderer,
       Discord = require('discord.js'),
-      client = new Discord.Client();
+      client = new Discord.Client(),
+      mentionRegex = /<(@|@!|@&|#)([0-9]{17,19})>/gi;
 
 let Channel = null;
 
