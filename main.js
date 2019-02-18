@@ -1,5 +1,4 @@
 const {app, BrowserWindow, ipcMain, Tray, nativeImage} = require('electron'),
-      Discord = require('discord.js'),
       fs = require('fs');
 
 const path = require('path'),

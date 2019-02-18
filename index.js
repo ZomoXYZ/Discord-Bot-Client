@@ -1,9 +1,30 @@
 const ipc = require('electron').ipcRenderer,
       Discord = require('discord.js'),
       client = new Discord.Client(),
-      mentionRegex = /<(@|@!|@&|#)([0-9]{17,19})>/gi;
+      mentionRegex = /<(@|@!|@&|#)(\d{17,19})>/gi;
 
 let Channel = null;
+
+const get = { // ready for other commands that I have laying around but aren't needed until guild support
+    user: user => {
+        user = user.trim();
+        if (/^<@!{0,1}\d{16,18}>$/.test(user)) user = user.replace(/^<@!{0,1}|>$/g, '');
+
+        //if "user" is an id, check for id
+        //  otherwise if there's a discriminator then check for both the name and discriminator
+        //  otherwise check for just the name
+        //      m = each user
+        var mFunc = /^\d{16,18}$/.test(user) ? m => m.id === user : (user.match(/#\d{4}$/) ? m => {
+            var reg = new RegExp('^'+user.toLowerCase().replace(/#\d{4}$/, '').replace(/[^a-z0-9]/g, '')+user.match(/#\d{4}$/)[0], 'i');
+            return reg.test(m.username.toLowerCase().replace(/[^a-z0-9]/g, '')+'#'+m.discriminator) || reg.test((m.nickname || '').toLowerCase().replace(/[^a-z0-9]/g, '')+'#'+m.discriminator);
+        } : m => {
+            var reg = new RegExp('^'+user.toLowerCase().replace(/[^a-z0-9]/g, ''), 'i');
+            return reg.test(m.username.toLowerCase().replace(/[^a-z0-9]/g, '')) || reg.test((m.nickname || '').toLowerCase().replace(/[^a-z0-9]/g, ''));
+        }),
+            m = client.users.filter(mFunc).array();
+        return m && m.length ? m[0] : null;
+    }
+}
 
 addEventListener('load', () => {
     
@@ -160,12 +181,9 @@ addEventListener('load', () => {
             if (channel)
                 channel.fetchMessages({limit: 100}).then(messages => {
                     
+                    messages = messages.array();
+                    
                     console.log('fetched')
-                    
-                    for (let i = 0; messages.length > i; i++)
-                        displayMessage(messages[i], id);
-                    
-                    console.log('displayed')
 
                     success({messages, channel});
                     
@@ -226,6 +244,11 @@ addEventListener('load', () => {
                     document.querySelector('#dm-open .dm-openinner').setAttribute('id', 'openid-'+id);
                     document.querySelector('#dm-open .dm-openinner').innerHTML = '';
                     
+                    for (let i = 0; messages.length > i; i++)
+                        displayMessage(messages[i], id);
+                    
+                    console.log('displayed')
+                    
                     
                 }).catch(console.error);
             }
@@ -233,7 +256,9 @@ addEventListener('load', () => {
 
         document.querySelector('#dm-list .dm-add span').addEventListener('click', e => {//add user
             if (document.querySelector('#dm-list .dm-add input').value) {
-                createDM(document.querySelector('#dm-list .dm-add input').value).then(displayDMChannel);
+                let value = document.querySelector('#dm-list .dm-add input').value,
+                    id = get.user(value);
+                createDM(id).then(displayDMChannel);
                 document.querySelector('#dm-list .dm-add input').value = '';
             }
         });
