@@ -244,7 +244,7 @@ addEventListener('load', () => {
                     document.querySelector('#dm-open .dm-openinner').setAttribute('id', 'openid-'+id);
                     document.querySelector('#dm-open .dm-openinner').innerHTML = '';
                     
-                    for (let i = 0; messages.length > i; i++)
+                    for (let i = messages.length-1; 0 < i; i--)
                         displayMessage(messages[i], id);
                     
                     console.log('displayed')
@@ -313,7 +313,7 @@ addEventListener('load', () => {
                                 document.querySelector('#dm-open .dm-openinner').setAttribute('id', 'openid-'+id);
                                 document.querySelector('#dm-open .dm-openinner').innerHTML = '';
 
-                                for (let i = 0; messages.length > i; i++)
+                                for (let i = messages.length-1; 0 < i; i--)
                                     displayMessage(messages[i], id);
 
                                 console.log('displayed')
