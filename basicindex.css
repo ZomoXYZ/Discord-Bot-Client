@@ -16,6 +16,12 @@ body {
     flex-shrink: 0;
     overflow-y: scroll;
 }
+#dm-list .dm-add {
+    padding-bottom: 15px;
+}
+#dm-list .dm-add input {
+    width: 100%;
+}
 #dm-list .dm-item {
     word-wrap: break-word;
     white-space: nowrap;
@@ -53,6 +59,9 @@ body {
 }
 #dm-open .dm-openinner .dm-content {
     margin-left: 45px;
+}
+#dm-open .dm-textboxcontain input {
+    width: 100%;
 }
 
 .dm-newmessage {

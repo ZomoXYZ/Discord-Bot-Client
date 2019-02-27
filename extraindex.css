@@ -1,0 +1,70 @@
+body {
+    color: white;
+    font-family: sans-serif;
+}
+textarea,
+select,
+input,
+button {
+    outline: none;
+}
+input {
+    color: white;
+    border: none;
+}
+
+.dm-icon {
+    border-radius: 100%;
+    width: 35px;
+    height: 35px;
+}
+
+#dm-list {
+    background: #2C2F33;
+}
+#dm-list .dm-add input {
+    background: #23272A;
+    padding: 4px 6px;
+    border-bottom: 1px solid black;
+}
+#dm-list .dm-item {
+    padding: 10px 5px;
+    display: flex;
+    align-items: center;
+}
+#dm-list .dm-item[selected] {
+    background: #23272A;
+}
+
+#dm-open {
+    background: #36393f;
+}
+#dm-open .dm-openinner .dm-message {
+    display: flex;
+    padding: 7px 14px;
+}
+.dm-text {
+    margin-left: 5px;
+}
+#dm-open .dm-openinner .dm-name {
+    font-weight: bold;
+    font-size: 12px;
+}
+#dm-open .dm-openinner .dm-content {
+    margin-left: 0px;
+    font-size: 16px;
+}
+#dm-open .dm-textboxcontain {
+    display: flex;
+    justify-content: center;
+}
+#dm-open .dm-textboxcontain .textbox {
+    background: rgba(114,118,125,.3);
+    margin: 10px;
+    padding: 8px 12px;
+    flex-grow: 1;
+}
+
+.dm-newmessage {
+    background: #ddd;
+}
