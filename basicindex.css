@@ -5,16 +5,27 @@ body {
     height: 100%;
 }
 
+.new-msg {
+    color: #000;
+}
+
+.dm-add {
+    background-color: #ffffff;
+}
+
 .dm-icon {
-    width: 25px;
-    height: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-left: 10px;
 }
 
 #dm-list {
-    width: 150px;
+    width: 100px;
     height: 100%;
     flex-shrink: 0;
     overflow-y: scroll;
+    background-color: #201825;
 }
 #dm-list .dm-item {
     word-wrap: break-word;
@@ -22,9 +33,6 @@ body {
     overflow: hidden;
     word-break: break-word;
     text-overflow: ellipsis;
-}
-#dm-list .dm-item[selected] {
-    background: #eee;
 }
 #dm-list .dm-item .dm-recipientcount {
     display: none;
@@ -42,19 +50,29 @@ body {
 }
 #dm-open .dm-openinner {
     flex-grow: 1;
-    overflow-y: scroll
+    overflow-y: scroll;
+    background-color: #36393f;
+}
+#dm-open .dm-openinner .dm-name {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #fff;
 }
 #dm-open .dm-openinner .dm-name::after {
+    font-family: Arial, Helvetica, sans-serif;
     content: "\a";
     white-space: pre;
+    margin-bottom: 30px;
+    color: #fff;
 }
 #dm-open .dm-openinner .dm-date {
     display: none;
 }
 #dm-open .dm-openinner .dm-content {
-    margin-left: 45px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 30px;
+    margin-left: 70px;
+    color: #fff;
 }
-
 .dm-newmessage {
     background: #ddd;
 }
