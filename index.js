@@ -5,7 +5,7 @@ const ipc = require('electron').ipcRenderer,
 
 let Channel = null;
 
-const get = { // ready for other commands that I have laying around but aren't needed until guild support
+/*const get = { // ready for other commands that I have laying around but aren't needed until guild support
     user: user => {
         user = user.trim();
         if (/^<@!{0,1}\d{16,18}>$/.test(user)) user = user.replace(/^<@!{0,1}|>$/g, '');
@@ -24,7 +24,7 @@ const get = { // ready for other commands that I have laying around but aren't n
             m = client.users.filter(mFunc).array();
         return m && m.length ? m[0] : null;
     }
-};
+};*/
 
 addEventListener('load', () => {
 
@@ -303,29 +303,23 @@ addEventListener('load', () => {
 
         let DMList = client.channels.filter(c => ['dm', 'group'].includes(c.type));
 
-        for (let i = 0; DMList.length > i; i++)
-            displayDMChannel(DMList[i]);
-
+        DMList.forEach((list) => {displayDMChannel(list)})
         document.querySelector('#dm-list .dm-existing').addEventListener('click', e => {//read dm
             let id = null;
-            for (let i = 0; e.path.length > i; i++) {
-                if (e.path[i] === document.body)
-                    i = e.path.length;
-                else if (e.path[i].getAttribute('class') && e.path[i].getAttribute('class').split(' ').includes('dm-item'))
-                    id = e.path[i].getAttribute('id').split(' ')[0].replace('channelid-', '');
-            }
+            e.path.forEach((path) => {
+                  if (path === document.body)
+                        break;
+                  else if (path.getAttribute('class') && path.getAttribute('class').split(' ').includes('dm-item'))
+                        id = path.getAttribute('id').split(' ')[0].replace('channelid-', '');
+            })
 
-            if (id) {
-                readDM(id).catch(console.error);
-            }
+            if (id) readDM(id).catch(console.error);
         });
 
         const addUserFromInput = () => {//add user
             if (document.querySelector('#dm-list .dm-add input').value) {
                 let id = document.querySelector('#dm-list .dm-add input').value;
-                if (typeof id === 'string') {
-                    id = client.users.find('tag', id).id
-                }
+                if (typeof id === 'string') id = client.users.find('tag', id).id
                 createDM(id).then(displayDMChannel);
                 document.querySelector('#dm-list .dm-add input').value = '';
             }
