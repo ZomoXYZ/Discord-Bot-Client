@@ -28,6 +28,7 @@ My end goal with this project is to create a client very similar to the native D
 * Add a user by ID or tag
 
 <sup>1</sup>Discord itself does not store a direct message list for Bot Users, and so it will not show up
+
 <sup>2</sup>In Kio's push, the bot automatically loads the DMs of the owners of servers.
 ### Immediate To-Do List
 
