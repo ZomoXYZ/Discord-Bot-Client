@@ -303,15 +303,17 @@ addEventListener('load', () => {
 
         let DMList = client.channels.filter(c => ['dm', 'group'].includes(c.type));
 
-        DMList.forEach((list) => {displayDMChannel(list)})
+        DMList.forEach((list) => {
+            displayDMChannel(list)
+        });
         document.querySelector('#dm-list .dm-existing').addEventListener('click', e => {//read dm
             let id = null;
-            e.path.forEach((path) => {
+            e.path.every((path) => {
                   if (path === document.body)
-                        break;
+                      return false;
                   else if (path.getAttribute('class') && path.getAttribute('class').split(' ').includes('dm-item'))
                         id = path.getAttribute('id').split(' ')[0].replace('channelid-', '');
-            })
+            });
 
             if (id) readDM(id).catch(console.error);
         });
@@ -319,7 +321,7 @@ addEventListener('load', () => {
         const addUserFromInput = () => {//add user
             if (document.querySelector('#dm-list .dm-add input').value) {
                 let id = document.querySelector('#dm-list .dm-add input').value;
-                if (typeof id === 'string') id = client.users.find('tag', id).id
+                if (typeof id === 'string') id = client.users.find('tag', id).id;
                 createDM(id).then(displayDMChannel);
                 document.querySelector('#dm-list .dm-add input').value = '';
             }
