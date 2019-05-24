@@ -2,6 +2,13 @@ body {
     color: white;
     font-family: sans-serif;
 }
+
+.dm-guildtopname {
+    padding: 2vh;
+    border-bottom: 2px solid white;
+    position: sticky;
+}
+
 textarea,
 select,
 input,
