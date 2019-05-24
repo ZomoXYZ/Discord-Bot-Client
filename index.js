@@ -260,7 +260,7 @@ addEventListener('load', () => {
                     document.querySelector('#dm-open .dm-openinner').setAttribute('id', 'openid-' + id);
                     document.querySelector('#dm-open .dm-openinner').innerHTML = '';
 
-                    messages.forEach(msg => {
+                    messages.reverse().forEach(msg => {
                         displayMessage(msg);
                     });
 
