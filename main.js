@@ -59,7 +59,6 @@ function mainApp(token) {
         // to stay active until the user quits explicitly with Cmd + Q
         if (process.platform !== 'darwin') {
             app.quit();
-            client.disconnect()
         }
     });
 
