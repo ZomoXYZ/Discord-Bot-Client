@@ -22,12 +22,14 @@ My end goal with this project is to create a client very similar to the native D
 
 ### Current Feature List
 
-* Get a direct message list<sup>1</sup>
+* Get a direct message list<sup>1,2</sup>
 * Send and receive direct messages
 * Notifications on a new message
+* Add a user by ID or tag
 
 <sup>1</sup>Discord itself does not store a direct message list for Bot Users, and so it will not show up
 
+<sup>2</sup>In Kio's push, the bot automatically loads the DMs of the owners of servers.
 ### Immediate To-Do List
 
 * Ability to/to show Edit/Delete messages
@@ -40,7 +42,7 @@ My end goal with this project is to create a client very similar to the native D
 * You have to click on a certain part of the Direct Message in the list to mark it as read.
 * There are no real error messages to let you know what is going on
 * The visual design is bad
-* Past messages will not load, I'm not sure what is causing this and whether it's a limitation with [Discord.JS] or a mistake I'm making
+~~* Past messages will not load, I'm not sure what is causing this and whether it's a limitation with [Discord.JS] or a mistake I'm making~~ Fixed!
 
 ### What I Will Never Add
 

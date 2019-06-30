@@ -1,9 +1,9 @@
-const {app, BrowserWindow, ipcMain, Tray, nativeImage} = require('electron'),
+const {app, BrowserWindow, ipcMain} = require('electron'),
       fs = require('fs');
 
-const path = require('path'),
+/*const path = require('path'),
       url = require('url'),
-      net = require('net');
+      net = require('net');*/
 
 let mainWindow;
 
@@ -25,7 +25,7 @@ fs.readFile(__dirname+'/token.txt', 'utf8', (tokenReadError, token) => {
 
         console.log(`ERROR: Please enter your token in "token.txt"\n  No data in file`);
         process.exit();
-        
+
     } else
         mainApp(token);
 
@@ -42,11 +42,9 @@ function mainApp(token) {
 
         mainWindow.loadFile('index.html');
 
-        mainWindow.webContents.openDevTools();
-
         mainWindow.on('closed', () => mainWindow = null);
     }
-    
+
     ipcMain.on('ready', () => {
         mainWindow.webContents.send('token', token);
     });
@@ -61,7 +59,6 @@ function mainApp(token) {
         // to stay active until the user quits explicitly with Cmd + Q
         if (process.platform !== 'darwin') {
             app.quit();
-            client.disconnect()
         }
     });
 
