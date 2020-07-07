@@ -15,7 +15,7 @@
         "start": "electron ."
     },
     "devDependencies": {
-        "electron": "^2.0.4"
+        "electron": "^9.1.0"
     },
     "dependencies": {
         "discord.js": "^11.3.2"
