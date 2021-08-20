@@ -51,13 +51,11 @@ My end goal with this project is to create a client very similar to the native D
 
 ## Installation
 
-Currently there is no compiled version of this app, and so you need [Node.JS] to be installed in order to run this.
+You will need [`Node.JS`] for the program to run
 
 1. Download this Git and extract it into a folder
-2. Create a text file called `token.txt` and type your Bot User's token in the file
-3. Open your Terminal/Command Prompt then use `cd` to open the directory of your folder
-4. Type `npm install` to install the required Node Modules for this application
-5. Type `npm start` to start up the Application
+2. Create a text file called `token.txt` (if u forget it will generate one and error needing you to rerun the script) and type your Bot User's token in the file
+3. run `start.bat` to compile and run the program
 
 ## Usage
 
