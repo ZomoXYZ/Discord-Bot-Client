@@ -2,6 +2,10 @@
 
 [Discord]'s client is great, but doesn't allow you to control a [Bot User] account.
 
+## Archival
+
+Between this likely being a breach of Discord's ToS and the fact that I haven't had any interest in pursuing this project, this project is now archived. Discord's api has changed so much since I started this, back when I started the audit log wasn't even a thing, and a whole rewrite would be necessary to accomodate those changes. On top of that, Discord appears to be pushing their interactions api a lot more than typical bot users, and I wouldn't be surprised if a future api update would cause this project to be impossible.
+
 ## About
 
 ### What this will let you do
